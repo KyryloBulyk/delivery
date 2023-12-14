@@ -1,4 +1,0 @@
-package com.delivery.restaurant.user;
-
-public class UserService {
-}
