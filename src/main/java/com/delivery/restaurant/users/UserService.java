@@ -3,6 +3,7 @@ package com.delivery.restaurant.users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -41,5 +42,15 @@ public class UserService {
         }
         userJpaRepository.delete(user);
         return true;
+    }
+
+    public User authenticateUser(String email, String password) {
+        Optional<User> user = userJpaRepository.findByEmail(email);
+
+        if(user.isPresent() && user.get().getPassword().equals(password)) {
+            return user.get();
+        } else {
+            return null;
+        }
     }
 }
