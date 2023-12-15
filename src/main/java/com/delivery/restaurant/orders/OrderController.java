@@ -1,6 +1,5 @@
 package com.delivery.restaurant.orders;
 
-import com.delivery.restaurant.products.Product;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
