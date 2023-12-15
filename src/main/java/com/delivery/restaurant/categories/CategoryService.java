@@ -26,7 +26,7 @@ public class CategoryService {
         if (category == null) {
             return null;
         }
-        category.setName(categoryDetails.getName());
+
         return categoryRepository.save(category);
     }
 
