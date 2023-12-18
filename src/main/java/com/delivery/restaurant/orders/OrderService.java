@@ -60,4 +60,9 @@ public class OrderService {
         orderRepository.delete(order);
         return true;
     }
+
+    public List<Order> getOrdersByUserId(Long userId) {
+        return orderRepository.findAllByUserId(userId);
+    }
+
 }

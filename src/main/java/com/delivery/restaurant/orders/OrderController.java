@@ -21,6 +21,16 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Order>> getOrdersByUserId(@PathVariable Long userId) {
+        List<Order> orders = orderService.getOrdersByUserId(userId);
+        if (orders.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(orders);
+    }
+
+
     @PostMapping("/create")
     public ResponseEntity<Order> createOrder(@RequestBody OrderDTO orderDTO) {
         Order createdOrder = orderService.createOrder(orderDTO);
