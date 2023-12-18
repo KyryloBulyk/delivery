@@ -20,18 +20,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    //Name
     @Column(name = "name")
     private String name;
 
+    //Email
     @Column(name = "email")
     private String email;
 
+    //Password
     @Column(name = "password")
     private String password;
 
-    @Column(name = "phone")
-    private String phone;
-
+    //Coupons
     @OneToMany(mappedBy = "user")
     private Set<UserCoupon> userCoupons = new HashSet<>();
 }

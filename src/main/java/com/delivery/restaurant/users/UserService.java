@@ -31,7 +31,6 @@ public class UserService {
         user.setName(userDetails.getName());
         user.setEmail(userDetails.getEmail());
         user.setPassword(userDetails.getPassword());
-        user.setPhone(userDetails.getPhone());
         return userJpaRepository.save(user);
     }
 

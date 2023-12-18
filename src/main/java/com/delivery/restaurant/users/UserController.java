@@ -21,18 +21,21 @@ public class UserController {
         this.userCouponService = userCouponService;
     }
 
+    //Get all users
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
+    //Create a user
     @PostMapping("/create")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User createdUser = userService.createUser(user);
         return ResponseEntity.ok(createdUser);
     }
 
+    //Login a user
     @PostMapping("/login")
     public ResponseEntity<User> loginUser(@RequestBody LoginRequest loginRequest) {
         User user = userService.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
@@ -43,7 +46,7 @@ public class UserController {
         }
     }
 
-
+    //Changing properties of a user
     @PutMapping("/changing/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
         User updatedUser = userService.updateUser(id, userDetails);
@@ -53,6 +56,7 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
+    //Deleting a user
     @DeleteMapping("/deleting/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         boolean isDeleted = userService.deleteUser(id);
@@ -62,18 +66,21 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    //Adding a coupon to a user
     @PostMapping("/{userId}/coupons/{couponId}")
     public ResponseEntity<UserCoupon> assignCouponToUser(@PathVariable Long userId, @PathVariable Long couponId) {
         UserCoupon userCoupon = userCouponService.assignCouponToUser(userId, couponId);
         return ResponseEntity.ok(userCoupon);
     }
 
+    //Get all coupons of a user
     @GetMapping("/{userId}/coupons")
     public ResponseEntity<List<UserCoupon>> getUserCoupons(@PathVariable Long userId) {
         List<UserCoupon> coupons = userCouponService.getCouponsByUserId(userId);
         return ResponseEntity.ok(coupons);
     }
 
+    //Remove a coupon from a user
     @DeleteMapping("/coupons/{userCouponId}")
     public ResponseEntity<?> removeCouponFromUser(@PathVariable Long userCouponId) {
         boolean isDeleted = userCouponService.removeCouponFromUser(userCouponId);
