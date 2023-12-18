@@ -35,4 +35,6 @@ public class User {
     //Coupons
     @OneToMany(mappedBy = "user")
     private Set<UserCoupon> userCoupons = new HashSet<>();
+
+
 }
