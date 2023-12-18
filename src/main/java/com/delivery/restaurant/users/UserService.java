@@ -1,5 +1,6 @@
 package com.delivery.restaurant.users;
 
+import com.delivery.restaurant.cart.Cart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -20,8 +21,18 @@ public class UserService {
     }
 
     public User createUser(User user) {
+        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+        if (existingUser.isPresent()) {
+            return null;
+        }
+
+        Cart cart = new Cart();
+        cart.setUser(user);
+        user.setCart(cart);
+
         return userRepository.save(user);
     }
+
 
     public User updateUser(Long id, User userDetails) {
         User user = userRepository.findById(id).orElse(null);

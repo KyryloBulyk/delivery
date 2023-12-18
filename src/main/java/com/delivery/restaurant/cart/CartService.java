@@ -1,74 +1,86 @@
-//package com.delivery.restaurant.cart;
-//
-//simport com.delivery.restaurant.users.User;
-//import com.delivery.restaurant.products.Product;
-//import com.delivery.restaurant.products.ProductRepository;
-//import com.delivery.restaurant.users.User;
-//import com.delivery.restaurant.users.UserRepository;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
-//
-//import java.util.Optional;
-//
-//@Service
-//public class CartService {
-//
-//    @Autowired
-//    private CartRepository cartRepository;
-//
-//    @Autowired
-//    private CartItemRepository cartItemRepository;
-//
-//    @Autowired
-//    private ProductRepository productRepository;
-//
-//    @Autowired
-//    private UserRepository userRepository;
-//
-//    // Додавання товару в кошик
-//    @Transactional
-//    public void addItemToCart(Long userId, Long productId, Integer quantity) {
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        Product product = productRepository.findById(productId)
-//                .orElseThrow(() -> new RuntimeException("Product not found"));
-//
-//        Cart cart = user.getCart();
-//        if (cart == null) {
-//            cart = new Cart();
-//            cart.setUser(user);
-//            cartRepository.save(cart);
-//        }
-//
-//        Optional<CartItem> existingItem = cart.getCartItems().stream()
-//                .filter(item -> item.getProduct().getId().equals(productId))
-//                .findFirst();
-//
-//        if (existingItem.isPresent()) {
-//            CartItem cartItem = existingItem.get();
-//            cartItem.setQuantity(cartItem.getQuantity() + quantity);
-//            cartItemRepository.save(cartItem);
-//        } else {
-//            CartItem newItem = new CartItem();
-//            newItem.setCart(cart);
-//            newItem.setProduct(product);
-//            newItem.setQuantity(quantity);
-//            cartItemRepository.save(newItem);
-//        }
-//
-//        updateCartTotalPrice(cart);
-//    }
-//
-//    // Оновлення загальної ціни кошика
-//    private void updateCartTotalPrice(Cart cart) {
-//        float totalPrice = cart.getCartItems().stream()
-//                .mapToFloat(item -> item.getProduct().getPrice() * item.getQuantity())
-//                .sum();
-//        cart.setTotalPrice(totalPrice);
-//        cartRepository.save(cart);
-//    }
-//
-//    // Додайте тут інші методи (видалення, оновлення кількості, отримання кошика тощо)
-//}
+package com.delivery.restaurant.cart;
+
+import com.delivery.restaurant.products.Product;
+import com.delivery.restaurant.products.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class CartService {
+
+    private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
+    private final ProductRepository productRepository;
+
+    @Autowired
+    public CartService(CartRepository cartRepository, CartItemRepository cartItemRepository, ProductRepository productRepository) {
+        this.cartRepository = cartRepository;
+        this.cartItemRepository = cartItemRepository;
+        this.productRepository = productRepository;
+    }
+
+    public Cart getCartByUserId(Integer userId) {
+        return cartRepository.findByUserId(userId).orElse(null);
+    }
+
+    public CartItem addProductToCart(Integer cartId, Long productId, Integer quantity) {
+        Cart cart = cartRepository.findById(cartId).orElse(null);
+        Product product = productRepository.findById(productId).orElse(null);
+
+        if (cart != null && product != null) {
+            Optional<CartItem> existingCartItem = cart.getCartItems().stream()
+                    .filter(item -> item.getProduct().getId().equals(productId))
+                    .findFirst();
+
+            CartItem cartItem;
+            if (existingCartItem.isPresent()) {
+                cartItem = existingCartItem.get();
+                cartItem.setQuantity(cartItem.getQuantity() + quantity);
+            } else {
+                cartItem = new CartItem();
+                cartItem.setCart(cart);
+                cartItem.setProduct(product);
+                cartItem.setQuantity(quantity);
+            }
+
+            cartItem = cartItemRepository.save(cartItem);
+            updateCartTotalPrice(cart);
+            return cartItem;
+        }
+        return null;
+    }
+
+    public boolean removeProductFromCart(Integer cartItemId) {
+        Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
+        if (cartItem.isPresent()) {
+            cartItemRepository.delete(cartItem.get());
+            updateCartTotalPrice(cartItem.get().getCart());
+            return true;
+        }
+        return false;
+    }
+
+    public CartItem updateCartItemQuantity(Integer cartItemId, Integer quantity) {
+        Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
+        if (cartItem.isPresent() && quantity > 0) {
+            cartItem.get().setQuantity(quantity);
+            CartItem updatedCartItem = cartItemRepository.save(cartItem.get());
+            updateCartTotalPrice(updatedCartItem.getCart());
+            return updatedCartItem;
+        }
+        return null;
+    }
+
+    private void updateCartTotalPrice(Cart cart) {
+        float total = 0;
+        List<CartItem> cartItems = cart.getCartItems();
+        for (CartItem item : cartItems) {
+            total += (float) (item.getProduct().getPrice() * item.getQuantity());
+        }
+        cart.setTotalPrice(total);
+        cartRepository.save(cart);
+    }
+}

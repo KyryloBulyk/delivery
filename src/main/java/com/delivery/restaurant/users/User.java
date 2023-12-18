@@ -1,5 +1,7 @@
 package com.delivery.restaurant.users;
 
+import com.delivery.restaurant.cart.Cart;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,6 +33,8 @@ public class User {
     @Column(name = "password")
     private String password;
 
-
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Cart cart;
 
 }
