@@ -1,5 +1,7 @@
 package com.delivery.restaurant.users;
 
+import com.delivery.restaurant.usercoupons.UserCoupon;
+import com.delivery.restaurant.usercoupons.UserCouponService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +13,12 @@ import java.util.List;
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService userService;
+    private final UserCouponService userCouponService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserCouponService userCouponService) {
         this.userService = userService;
+        this.userCouponService = userCouponService;
     }
 
     @GetMapping
@@ -56,6 +60,28 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{userId}/coupons/{couponId}")
+    public ResponseEntity<UserCoupon> assignCouponToUser(@PathVariable Long userId, @PathVariable Long couponId) {
+        UserCoupon userCoupon = userCouponService.assignCouponToUser(userId, couponId);
+        return ResponseEntity.ok(userCoupon);
+    }
+
+    @GetMapping("/{userId}/coupons")
+    public ResponseEntity<List<UserCoupon>> getUserCoupons(@PathVariable Long userId) {
+        List<UserCoupon> coupons = userCouponService.getCouponsByUserId(userId);
+        return ResponseEntity.ok(coupons);
+    }
+
+    @DeleteMapping("/coupons/{userCouponId}")
+    public ResponseEntity<?> removeCouponFromUser(@PathVariable Long userCouponId) {
+        boolean isDeleted = userCouponService.removeCouponFromUser(userCouponId);
+        if (isDeleted) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }
