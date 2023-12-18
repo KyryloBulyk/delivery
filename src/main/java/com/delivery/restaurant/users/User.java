@@ -1,6 +1,5 @@
 package com.delivery.restaurant.users;
 
-import com.delivery.restaurant.usercoupons.UserCoupon;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,9 +31,6 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    //Coupons
-    @OneToMany(mappedBy = "user")
-    private Set<UserCoupon> userCoupons = new HashSet<>();
 
 
 }
