@@ -21,6 +21,77 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: cart; Type: TABLE; Schema: public; Owner: kyrylo
+--
+
+CREATE TABLE public.cart (
+    cart_id integer NOT NULL,
+    user_id integer,
+    total_price real NOT NULL
+);
+
+
+ALTER TABLE public.cart OWNER TO kyrylo;
+
+--
+-- Name: cart_cart_id_seq; Type: SEQUENCE; Schema: public; Owner: kyrylo
+--
+
+CREATE SEQUENCE public.cart_cart_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cart_cart_id_seq OWNER TO kyrylo;
+
+--
+-- Name: cart_cart_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kyrylo
+--
+
+ALTER SEQUENCE public.cart_cart_id_seq OWNED BY public.cart.cart_id;
+
+
+--
+-- Name: cart_item; Type: TABLE; Schema: public; Owner: kyrylo
+--
+
+CREATE TABLE public.cart_item (
+    cart_item_id integer NOT NULL,
+    cart_id integer,
+    product_id bigint,
+    quantity integer NOT NULL
+);
+
+
+ALTER TABLE public.cart_item OWNER TO kyrylo;
+
+--
+-- Name: cart_item_cart_item_id_seq; Type: SEQUENCE; Schema: public; Owner: kyrylo
+--
+
+CREATE SEQUENCE public.cart_item_cart_item_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cart_item_cart_item_id_seq OWNER TO kyrylo;
+
+--
+-- Name: cart_item_cart_item_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kyrylo
+--
+
+ALTER SEQUENCE public.cart_item_cart_item_id_seq OWNED BY public.cart_item.cart_item_id;
+
+
+--
 -- Name: categories; Type: TABLE; Schema: public; Owner: kyrylo
 --
 
@@ -52,42 +123,6 @@ ALTER TABLE public.categories_id_seq OWNER TO kyrylo;
 --
 
 ALTER SEQUENCE public.categories_id_seq OWNED BY public.categories.id;
-
-
---
--- Name: coupons; Type: TABLE; Schema: public; Owner: kyrylo
---
-
-CREATE TABLE public.coupons (
-    id bigint NOT NULL,
-    code character varying(255) NOT NULL,
-    discount integer NOT NULL,
-    valid_until timestamp(6) without time zone NOT NULL
-);
-
-
-ALTER TABLE public.coupons OWNER TO kyrylo;
-
---
--- Name: coupons_id_seq; Type: SEQUENCE; Schema: public; Owner: kyrylo
---
-
-CREATE SEQUENCE public.coupons_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.coupons_id_seq OWNER TO kyrylo;
-
---
--- Name: coupons_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kyrylo
---
-
-ALTER SEQUENCE public.coupons_id_seq OWNED BY public.coupons.id;
 
 
 --
@@ -165,40 +200,6 @@ ALTER SEQUENCE public.products_id_seq OWNED BY public.products.id;
 
 
 --
--- Name: user_coupons; Type: TABLE; Schema: public; Owner: kyrylo
---
-
-CREATE TABLE public.user_coupons (
-    id bigint NOT NULL,
-    user_id integer NOT NULL,
-    coupon_id bigint NOT NULL
-);
-
-
-ALTER TABLE public.user_coupons OWNER TO kyrylo;
-
---
--- Name: user_coupons_id_seq; Type: SEQUENCE; Schema: public; Owner: kyrylo
---
-
-CREATE SEQUENCE public.user_coupons_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.user_coupons_id_seq OWNER TO kyrylo;
-
---
--- Name: user_coupons_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kyrylo
---
-
-ALTER SEQUENCE public.user_coupons_id_seq OWNED BY public.user_coupons.id;
-
-
---
 -- Name: users; Type: TABLE; Schema: public; Owner: kyrylo
 --
 
@@ -236,17 +237,24 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
+-- Name: cart cart_id; Type: DEFAULT; Schema: public; Owner: kyrylo
+--
+
+ALTER TABLE ONLY public.cart ALTER COLUMN cart_id SET DEFAULT nextval('public.cart_cart_id_seq'::regclass);
+
+
+--
+-- Name: cart_item cart_item_id; Type: DEFAULT; Schema: public; Owner: kyrylo
+--
+
+ALTER TABLE ONLY public.cart_item ALTER COLUMN cart_item_id SET DEFAULT nextval('public.cart_item_cart_item_id_seq'::regclass);
+
+
+--
 -- Name: categories id; Type: DEFAULT; Schema: public; Owner: kyrylo
 --
 
 ALTER TABLE ONLY public.categories ALTER COLUMN id SET DEFAULT nextval('public.categories_id_seq'::regclass);
-
-
---
--- Name: coupons id; Type: DEFAULT; Schema: public; Owner: kyrylo
---
-
-ALTER TABLE ONLY public.coupons ALTER COLUMN id SET DEFAULT nextval('public.coupons_id_seq'::regclass);
 
 
 --
@@ -264,17 +272,27 @@ ALTER TABLE ONLY public.products ALTER COLUMN id SET DEFAULT nextval('public.pro
 
 
 --
--- Name: user_coupons id; Type: DEFAULT; Schema: public; Owner: kyrylo
---
-
-ALTER TABLE ONLY public.user_coupons ALTER COLUMN id SET DEFAULT nextval('public.user_coupons_id_seq'::regclass);
-
-
---
 -- Name: users id; Type: DEFAULT; Schema: public; Owner: kyrylo
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Data for Name: cart; Type: TABLE DATA; Schema: public; Owner: kyrylo
+--
+
+COPY public.cart (cart_id, user_id, total_price) FROM stdin;
+1	1	0
+\.
+
+
+--
+-- Data for Name: cart_item; Type: TABLE DATA; Schema: public; Owner: kyrylo
+--
+
+COPY public.cart_item (cart_item_id, cart_id, product_id, quantity) FROM stdin;
+\.
 
 
 --
@@ -290,22 +308,10 @@ COPY public.categories (id, name) FROM stdin;
 
 
 --
--- Data for Name: coupons; Type: TABLE DATA; Schema: public; Owner: kyrylo
---
-
-COPY public.coupons (id, code, discount, valid_until) FROM stdin;
-1	SUMMER2023	15	2023-08-31 02:00:00
-6	WINTER2023	10	2023-12-31 01:00:00
-\.
-
-
---
 -- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: kyrylo
 --
 
 COPY public.orders (id, user_id, total_price, status, order_date) FROM stdin;
-2	1	50	new	2023-12-15 11:00:00
-1	1	20	new	2023-12-15 11:00:00
 \.
 
 
@@ -314,17 +320,7 @@ COPY public.orders (id, user_id, total_price, status, order_date) FROM stdin;
 --
 
 COPY public.products (id, title, price, img, category_id) FROM stdin;
-\.
-
-
---
--- Data for Name: user_coupons; Type: TABLE DATA; Schema: public; Owner: kyrylo
---
-
-COPY public.user_coupons (id, user_id, coupon_id) FROM stdin;
-1	1	1
-3	3	1
-4	3	6
+2	Маргарита	9.99	url_to_image_of_margarita_pizza	2
 \.
 
 
@@ -333,9 +329,22 @@ COPY public.user_coupons (id, user_id, coupon_id) FROM stdin;
 --
 
 COPY public.users (id, name, password, email, phone) FROM stdin;
-1	Kyrylo	12345678	kyrylo.bulyk@gmail.com	\N
-3	Nazar	12345	nazar.korchevsky@gmail.com	\N
+1	John Doe	password123	hello@example.com	\N
 \.
+
+
+--
+-- Name: cart_cart_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kyrylo
+--
+
+SELECT pg_catalog.setval('public.cart_cart_id_seq', 1, true);
+
+
+--
+-- Name: cart_item_cart_item_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kyrylo
+--
+
+SELECT pg_catalog.setval('public.cart_item_cart_item_id_seq', 1, true);
 
 
 --
@@ -346,38 +355,40 @@ SELECT pg_catalog.setval('public.categories_id_seq', 5, true);
 
 
 --
--- Name: coupons_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kyrylo
---
-
-SELECT pg_catalog.setval('public.coupons_id_seq', 7, true);
-
-
---
 -- Name: orders_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kyrylo
 --
 
-SELECT pg_catalog.setval('public.orders_id_seq', 3, true);
+SELECT pg_catalog.setval('public.orders_id_seq', 1, false);
 
 
 --
 -- Name: products_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kyrylo
 --
 
-SELECT pg_catalog.setval('public.products_id_seq', 1, true);
-
-
---
--- Name: user_coupons_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kyrylo
---
-
-SELECT pg_catalog.setval('public.user_coupons_id_seq', 4, true);
+SELECT pg_catalog.setval('public.products_id_seq', 2, true);
 
 
 --
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kyrylo
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 3, true);
+SELECT pg_catalog.setval('public.users_id_seq', 1, true);
+
+
+--
+-- Name: cart_item cart_item_pkey; Type: CONSTRAINT; Schema: public; Owner: kyrylo
+--
+
+ALTER TABLE ONLY public.cart_item
+    ADD CONSTRAINT cart_item_pkey PRIMARY KEY (cart_item_id);
+
+
+--
+-- Name: cart cart_pkey; Type: CONSTRAINT; Schema: public; Owner: kyrylo
+--
+
+ALTER TABLE ONLY public.cart
+    ADD CONSTRAINT cart_pkey PRIMARY KEY (cart_id);
 
 
 --
@@ -397,22 +408,6 @@ ALTER TABLE ONLY public.categories
 
 
 --
--- Name: coupons coupons_code_key; Type: CONSTRAINT; Schema: public; Owner: kyrylo
---
-
-ALTER TABLE ONLY public.coupons
-    ADD CONSTRAINT coupons_code_key UNIQUE (code);
-
-
---
--- Name: coupons coupons_pkey; Type: CONSTRAINT; Schema: public; Owner: kyrylo
---
-
-ALTER TABLE ONLY public.coupons
-    ADD CONSTRAINT coupons_pkey PRIMARY KEY (id);
-
-
---
 -- Name: orders orders_pkey; Type: CONSTRAINT; Schema: public; Owner: kyrylo
 --
 
@@ -426,14 +421,6 @@ ALTER TABLE ONLY public.orders
 
 ALTER TABLE ONLY public.products
     ADD CONSTRAINT products_pkey PRIMARY KEY (id);
-
-
---
--- Name: user_coupons user_coupons_pkey; Type: CONSTRAINT; Schema: public; Owner: kyrylo
---
-
-ALTER TABLE ONLY public.user_coupons
-    ADD CONSTRAINT user_coupons_pkey PRIMARY KEY (id);
 
 
 --
@@ -453,6 +440,54 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: cart_item cart_item_cart_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: kyrylo
+--
+
+ALTER TABLE ONLY public.cart_item
+    ADD CONSTRAINT cart_item_cart_id_fkey FOREIGN KEY (cart_id) REFERENCES public.cart(cart_id);
+
+
+--
+-- Name: cart_item cart_item_cart_id_fkey1; Type: FK CONSTRAINT; Schema: public; Owner: kyrylo
+--
+
+ALTER TABLE ONLY public.cart_item
+    ADD CONSTRAINT cart_item_cart_id_fkey1 FOREIGN KEY (cart_id) REFERENCES public.cart(cart_id);
+
+
+--
+-- Name: cart_item cart_item_product_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: kyrylo
+--
+
+ALTER TABLE ONLY public.cart_item
+    ADD CONSTRAINT cart_item_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id);
+
+
+--
+-- Name: cart_item cart_item_product_id_fkey1; Type: FK CONSTRAINT; Schema: public; Owner: kyrylo
+--
+
+ALTER TABLE ONLY public.cart_item
+    ADD CONSTRAINT cart_item_product_id_fkey1 FOREIGN KEY (product_id) REFERENCES public.products(id);
+
+
+--
+-- Name: cart cart_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: kyrylo
+--
+
+ALTER TABLE ONLY public.cart
+    ADD CONSTRAINT cart_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: cart cart_user_id_fkey1; Type: FK CONSTRAINT; Schema: public; Owner: kyrylo
+--
+
+ALTER TABLE ONLY public.cart
+    ADD CONSTRAINT cart_user_id_fkey1 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: orders orders_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: kyrylo
 --
 
@@ -466,22 +501,6 @@ ALTER TABLE ONLY public.orders
 
 ALTER TABLE ONLY public.products
     ADD CONSTRAINT products_category_id_fkey FOREIGN KEY (category_id) REFERENCES public.categories(id);
-
-
---
--- Name: user_coupons user_coupons_coupon_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: kyrylo
---
-
-ALTER TABLE ONLY public.user_coupons
-    ADD CONSTRAINT user_coupons_coupon_id_fkey FOREIGN KEY (coupon_id) REFERENCES public.coupons(id);
-
-
---
--- Name: user_coupons user_coupons_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: kyrylo
---
-
-ALTER TABLE ONLY public.user_coupons
-    ADD CONSTRAINT user_coupons_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
