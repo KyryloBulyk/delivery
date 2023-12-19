@@ -2,6 +2,8 @@ package com.delivery.restaurant.cart;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/cart")
 public class CartController {
@@ -12,8 +14,8 @@ public class CartController {
     }
 
     @GetMapping
-    public Cart getCartByUserId(@RequestParam Integer userId) {
-        return cartService.getCartByUserId(userId);
+    public List<CartItemDTO> getCartItemsByUserId(@RequestParam Integer userId) {
+        return cartService.getCartItemsByUserId(userId);
     }
 
     @PostMapping("/add")

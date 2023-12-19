@@ -5,8 +5,10 @@ import com.delivery.restaurant.products.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CartService {
@@ -22,8 +24,19 @@ public class CartService {
         this.productRepository = productRepository;
     }
 
-    public Cart getCartByUserId(Integer userId) {
-        return cartRepository.findByUserId(userId).orElse(null);
+    public List<CartItemDTO> getCartItemsByUserId(Integer userId) {
+        Cart cart = cartRepository.findByUserId(userId).orElse(null);
+        if (cart == null) {
+            return Collections.emptyList();
+        }
+
+        return cart.getCartItems().stream()
+                .map(this::convertToCartItemDTO)
+                .collect(Collectors.toList());
+    }
+
+    private CartItemDTO convertToCartItemDTO(CartItem cartItem) {
+        return new CartItemDTO(cartItem.getProduct(), cartItem.getQuantity());
     }
 
     public CartItem addProductToCart(Integer cartId, Long productId, Integer quantity) {

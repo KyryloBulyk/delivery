@@ -2,6 +2,7 @@ package com.delivery.restaurant.cart;
 
 import com.delivery.restaurant.users.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,5 +31,6 @@ public class Cart {
     private Float totalPrice = 0.0f;
 
     @OneToMany(mappedBy = "cart")
+    @JsonManagedReference
     private List<CartItem> cartItems;
 }
