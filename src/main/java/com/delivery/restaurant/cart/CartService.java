@@ -24,7 +24,7 @@ public class CartService {
         this.productRepository = productRepository;
     }
 
-    public List<CartItemDTO> getCartItemsByUserId(Integer userId) {
+    public List<CartItemDTO> getCartItemsByUserId(Long userId) {
         Cart cart = cartRepository.findByUserId(userId).orElse(null);
         if (cart == null) {
             return Collections.emptyList();
@@ -39,7 +39,7 @@ public class CartService {
         return new CartItemDTO(cartItem.getProduct(), cartItem.getQuantity());
     }
 
-    public CartItem addProductToCart(Integer cartId, Long productId, Integer quantity) {
+    public CartItem addProductToCart(Long cartId, Long productId, Integer quantity) {
         Cart cart = cartRepository.findById(cartId).orElse(null);
         Product product = productRepository.findById(productId).orElse(null);
 
@@ -66,7 +66,7 @@ public class CartService {
         return null;
     }
 
-    public boolean removeProductFromCart(Integer cartItemId) {
+    public boolean removeProductFromCart(Long cartItemId) {
         Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
         if (cartItem.isPresent()) {
             cartItemRepository.delete(cartItem.get());
@@ -76,7 +76,7 @@ public class CartService {
         return false;
     }
 
-    public CartItem updateCartItemQuantity(Integer cartItemId, Integer quantity) {
+    public CartItem updateCartItemQuantity(Long cartItemId, Integer quantity) {
         Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
         if (cartItem.isPresent() && quantity > 0) {
             cartItem.get().setQuantity(quantity);

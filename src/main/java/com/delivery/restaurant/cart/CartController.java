@@ -15,22 +15,22 @@ public class CartController {
     }
 
     @GetMapping
-    public List<CartItemDTO> getCartItemsByUserId(@RequestParam Integer userId) {
+    public List<CartItemDTO> getCartItemsByUserId(@RequestParam Long userId) {
         return cartService.getCartItemsByUserId(userId);
     }
 
     @PostMapping("/add")
-    public CartItem addProductToCart(@RequestParam Integer cartId, @RequestParam Long productId, @RequestParam Integer quantity) {
+    public CartItem addProductToCart(@RequestParam Long cartId, @RequestParam Long productId, @RequestParam Integer quantity) {
         return cartService.addProductToCart(cartId, productId, quantity);
     }
 
     @PutMapping("/update")
-    public CartItem updateCartItemQuantity(@RequestParam Integer cartItemId, @RequestParam Integer quantity) {
+    public CartItem updateCartItemQuantity(@RequestParam Long cartItemId, @RequestParam Integer quantity) {
         return cartService.updateCartItemQuantity(cartItemId, quantity);
     }
 
     @DeleteMapping("/remove")
-    public boolean removeProductFromCart(@RequestParam Integer cartItemId) {
+    public boolean removeProductFromCart(@RequestParam Long cartItemId) {
         return cartService.removeProductFromCart(cartItemId);
     }
 }
