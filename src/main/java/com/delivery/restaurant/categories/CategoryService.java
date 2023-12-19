@@ -27,6 +27,8 @@ public class CategoryService {
             return null;
         }
 
+        category.setName(categoryDetails.getName());
+
         return categoryRepository.save(category);
     }
 
