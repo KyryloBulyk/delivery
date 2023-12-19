@@ -29,13 +29,13 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        user = new User(1, "Test User", "test@example.com", "password", new Cart());
+        user = new User(1L, "Test User", "test@example.com", "password", new Cart());
     }
 
     @Test
     void getAllUsers() {
         //given
-        User anotherUser =  new User(2, "Another User", "another@example.com", "password", new Cart());
+        User anotherUser =  new User(2L, "Another User", "another@example.com", "password", new Cart());
         List<User> expectedUsers = Arrays.asList(user, anotherUser);
         Mockito.when(userRepository.findAll()).thenReturn(expectedUsers);
 
@@ -78,8 +78,8 @@ class UserServiceTest {
     @Test
     void updateUser() {
         // given
-        User existingUser = new User(1, "Existing User", "existing@example.com", "password", new Cart());
-        User updateUser = new User(1, "Another User", "another@example.com", "password123", new Cart());
+        User existingUser = new User(1L, "Existing User", "existing@example.com", "password", new Cart());
+        User updateUser = new User(1L, "Another User", "another@example.com", "password123", new Cart());
 
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(updateUser);
@@ -100,7 +100,7 @@ class UserServiceTest {
     @Test
     void updateUserWhenUserEqualsNull() {
         //given
-        User updateUser = new User(1, "Another User", "another@example.com", "password123", new Cart());
+        User updateUser = new User(1L, "Another User", "another@example.com", "password123", new Cart());
 
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -115,7 +115,7 @@ class UserServiceTest {
     @Test
     void deleteUser() {
         //given
-        User existingUser = new User(1, "Existing User", "existing@example.com", "password", new Cart());
+        User existingUser = new User(1L, "Existing User", "existing@example.com", "password", new Cart());
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
 
         //when
@@ -143,7 +143,7 @@ class UserServiceTest {
     @Test
     void authenticateUser() {
         //given
-        User testUser = new User(1, "Test User", "test@example.com", "password", new Cart());
+        User testUser = new User(1L, "Test User", "test@example.com", "password", new Cart());
         String testEmail = "test@example.com";
         String testPassword = "password";
 

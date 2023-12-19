@@ -39,20 +39,26 @@ public class OrderService {
     @Transactional
     public Order updateOrder(Long id, OrderDTO orderDTODetails) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Order not found with id: " + id));
+                .orElseThrow(() -> notFoundException("Order", id));
 
         order.setTotalPrice(orderDTODetails.getTotalPrice());
         order.setStatus(orderDTODetails.getStatus());
         order.setDate(orderDTODetails.getDate());
 
-        if (!(order.getUser().getId() == (orderDTODetails.getUserId()))) {
+        Long userId = order.getUser().getId();
+        if (!userId.equals(orderDTODetails.getUserId())) {
             User user = userRepository.findById(orderDTODetails.getUserId())
-                    .orElseThrow(() -> new NoSuchElementException("User not found with id: " + orderDTODetails.getUserId()));
+                    .orElseThrow(() -> notFoundException("User", orderDTODetails.getUserId()));
             order.setUser(user);
         }
 
         return orderRepository.save(order);
     }
+
+    private NoSuchElementException notFoundException(String entityName, Long id) {
+        return new NoSuchElementException(entityName + " not found with id: " + id);
+    }
+
 
     public boolean deleteOrder(Long id) {
         Order order = orderRepository.findById(id)
