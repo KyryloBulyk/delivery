@@ -36,7 +36,7 @@ public class CartService {
     }
 
     private CartItemDTO convertToCartItemDTO(CartItem cartItem) {
-        return new CartItemDTO(cartItem.getProduct(), cartItem.getQuantity());
+        return new CartItemDTO(cartItem.getCartItemId(), cartItem.getProduct(), cartItem.getQuantity());
     }
 
     public CartItem addProductToCart(Long cartId, Long productId, Integer quantity) {
