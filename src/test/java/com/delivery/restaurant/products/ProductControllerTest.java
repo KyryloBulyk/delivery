@@ -1,9 +1,6 @@
 package com.delivery.restaurant.products;
 
 import com.delivery.restaurant.categories.Category;
-import com.delivery.restaurant.users.User;
-import org.checkerframework.checker.units.qual.C;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +12,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
