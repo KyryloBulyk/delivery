@@ -96,12 +96,46 @@ class CartServiceTest {
 
 
     @Test
-    @Disabled
     void removeProductFromCart() {
+        //given
+        Long cartId = 1L;
+        User user = new User(1L, "Test User", "test@example.com", "password", null);
+        Cart cart = new Cart(cartId, user, 0.0f, new ArrayList<>());
+        Product product1 = new Product(1L, "Product 1", 10.0, "Image 1", null);
+        CartItem cartItem1 = new CartItem(1L, cart, product1, 5);
+
+        Mockito.when(cartItemRepository.findById(1L)).thenReturn(Optional.of(cartItem1));
+
+        //when
+        boolean result = cartService.removeProductFromCart(1L);
+
+        //then
+        assertTrue(result);
+
+        Mockito.verify(cartItemRepository).findById(1L);
+        Mockito.verify(cartItemRepository).delete(cartItem1);
     }
 
     @Test
-    @Disabled
     void updateCartItemQuantity() {
+        //given
+        Long cartId = 1L;
+        User user = new User(1L, "Test User", "test@example.com", "password", null);
+        Cart cart = new Cart(cartId, user, 0.0f, new ArrayList<>());
+
+        Product product1 = new Product(1L, "Product 1", 10.0, "Image 1", null);
+        CartItem cartItem1 = new CartItem(1L, cart, product1, 5);
+        CartItem cartItem2 = new CartItem(2L, cart, product1, 4);
+
+        Mockito.when(cartItemRepository.findById(1L)).thenReturn(Optional.of(cartItem1));
+        Mockito.when(cartItemRepository.save(Mockito.any(CartItem.class))).thenReturn(cartItem2);
+
+        //when
+        CartItem result = cartService.updateCartItemQuantity(1L, 4);
+
+        //then
+        assertEquals(cartItem2, result);
+        Mockito.verify(cartItemRepository).findById(1L);
+        Mockito.verify(cartItemRepository).save(Mockito.any(CartItem.class));
     }
 }
