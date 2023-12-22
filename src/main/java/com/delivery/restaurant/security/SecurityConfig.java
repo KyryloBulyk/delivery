@@ -36,10 +36,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf().disable()
+                .cors().and()
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/authenticate").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/create").permitAll()
-                        .requestMatchers(HttpMethod.GET, "api/v1/products/all").permitAll() // Вільний доступ до GET запитів на /api/v1/products
                         .anyRequest().authenticated() // Для всіх інших запитів потрібна аутентифікація
                 )
                 .sessionManagement()
