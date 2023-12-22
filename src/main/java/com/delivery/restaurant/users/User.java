@@ -33,6 +33,8 @@ public class User {
     @Column(name = "password")
     private String password;
 
+//    private String roles;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private Cart cart;

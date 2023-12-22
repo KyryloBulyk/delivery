@@ -1,8 +1,14 @@
 package com.delivery.restaurant.users;
 
+import com.delivery.restaurant.authenticate.AuthRequest;
+import com.delivery.restaurant.authenticate.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,7 +17,14 @@ import java.util.List;
 @RequestMapping("/api/v1/users")
 @CrossOrigin(origins = "http://localhost:5173")
 public class UserController {
+    @Autowired
     private final UserService userService;
+
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     public UserController(UserService userService) {
@@ -61,6 +74,24 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/authenticate")
+    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+        return jwtService.generateToken(authRequest.getUsername());
+//        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+//
+//        if(authentication.isAuthenticated()) {
+//            return jwtService.generateToken(authRequest.getUsername());
+//        } else {
+//            return "Hello World";
+////            throw new UsernameNotFoundException("Invalid user request");
+//        }
+    }
+
+    @GetMapping("/hello")
+    public String hello() {
+        return "Hello World";
     }
 
 }
