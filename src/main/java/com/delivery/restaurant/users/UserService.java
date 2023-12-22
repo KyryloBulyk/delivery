@@ -2,6 +2,7 @@ package com.delivery.restaurant.users;
 
 import com.delivery.restaurant.cart.Cart;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +11,9 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserService(UserRepository userJpaRepository) {
@@ -26,6 +30,8 @@ public class UserService {
             return null;
         }
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         Cart cart = new Cart();
         cart.setUser(user);
         user.setCart(cart);
@@ -39,11 +45,15 @@ public class UserService {
         if (user == null) {
             return null;
         }
+
         user.setName(userDetails.getName());
         user.setEmail(userDetails.getEmail());
-        user.setPassword(userDetails.getPassword());
+        user.setRolesSet(userDetails.getRolesSet());
+        user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+
         return userRepository.save(user);
     }
+
 
     public boolean deleteUser(Long id) {
         User user = userRepository.findById(id).orElse(null);

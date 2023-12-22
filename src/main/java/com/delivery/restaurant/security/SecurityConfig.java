@@ -37,8 +37,12 @@ public class SecurityConfig {
         return http.csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/users/authenticate").permitAll()
+                .requestMatchers("/api/v1/users/create").permitAll()
+                .requestMatchers("/api/v1/products").permitAll()
                 .and()
                 .authorizeHttpRequests().requestMatchers("/api/v1/users/**")
+                .authenticated().and()
+                .authorizeHttpRequests().requestMatchers("/api/v1/products/**")
                 .authenticated().and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -48,42 +52,9 @@ public class SecurityConfig {
                 .build();
     }
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        return http
-//                .csrf().disable()
-//                .authorizeHttpRequests()
-//                .requestMatchers("/api/v1/users/authenticate").permitAll()
-//                .and()
-//                .authorizeHttpRequests().requestMatchers("/api/v1/products/**").authenticated()
-//                .and()
-////                .httpBasic()
-////                .and().build();
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .authenticationProvider(authenticationProvider())
-//                .addFilterBefore(authFilter)
-//                .build();
-//
-//
-//    }
-
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
-        UserDetails admin = User.withUsername("admin")
-                .password(encoder.encode("12345"))
-                .roles("ADMIN")
-                .build();
-
-        UserDetails user = User.withUsername("Kyrylo")
-                .password(encoder.encode("1234567"))
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(admin, user);
-
-//        return new OurUserDetailService();
+    public UserDetailsService userDetailsService() {
+        return new OurUserDetailService();
     }
 
     @Bean
@@ -93,8 +64,8 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider authenticationProvider=new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService(passwordEncoder()));
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService());
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }

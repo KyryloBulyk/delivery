@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,6 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,10 +35,19 @@ public class User {
     @Column(name = "password")
     private String password;
 
-//    private String roles;
+    @Column(name = "roles")
+    private String roles;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private Cart cart;
+
+    public Set<String> getRolesSet() {
+        return new HashSet<>(Arrays.asList(roles.split(",")));
+    }
+
+    public void setRolesSet(Set<String> rolesSet) {
+        this.roles = String.join(",", rolesSet);
+    }
 
 }

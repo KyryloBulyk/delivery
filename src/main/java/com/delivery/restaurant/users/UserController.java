@@ -5,6 +5,7 @@ import com.delivery.restaurant.authenticate.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -45,17 +46,6 @@ public class UserController {
         return ResponseEntity.ok(createdUser);
     }
 
-    //Login a user
-    @PostMapping("/login")
-    public ResponseEntity<User> loginUser(@RequestBody LoginRequest loginRequest) {
-        User user = userService.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
-        if (user != null) {
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-    }
-
     //Changing properties of a user
     @PutMapping("/changing/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
@@ -88,6 +78,7 @@ public class UserController {
     }
 
     @GetMapping("/hello")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String hello() {
         return "Hello World";
     }
