@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 import java.util.Arrays;
@@ -22,6 +23,9 @@ class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private UserService userService;
 
@@ -29,13 +33,13 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        user = new User(1L, "Test User", "test@example.com", "password", new Cart());
+        user = new User(1L, "Test User", "test@example.com", "password","USER", new Cart());
     }
 
     @Test
     void getAllUsers() {
         //given
-        User anotherUser =  new User(2L, "Another User", "another@example.com", "password", new Cart());
+        User anotherUser =  new User(2L, "Another User", "another@example.com", "password","USER", new Cart());
         List<User> expectedUsers = Arrays.asList(user, anotherUser);
         Mockito.when(userRepository.findAll()).thenReturn(expectedUsers);
 
@@ -48,18 +52,20 @@ class UserServiceTest {
     }
 
     @Test
-    void createUser() {
-        //given
-        Mockito.when(userRepository.findByEmail(user.getEmail())).thenReturn(java.util.Optional.empty());
-        Mockito.when(userRepository.save(user)).thenReturn(user);
+    void testCreateUser() {
+        User user = new User();
+        user.setEmail("test@example.com");
+        user.setPassword("password");
 
-        //when
-        User actualUser = userService.createUser(user);
+        Mockito.when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
+        Mockito.when(passwordEncoder.encode(Mockito.anyString())).thenReturn("encodedPassword");
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        //then
-        assertEquals(user, actualUser);
-        Mockito.verify(userRepository).findByEmail(user.getEmail());
-        Mockito.verify(userRepository).save(user);
+        User createdUser = userService.createUser(user);
+
+        assertNotNull(createdUser);
+        assertEquals("encodedPassword", createdUser.getPassword());
+        Mockito.verify(userRepository).save(Mockito.any(User.class));
     }
 
     @Test
@@ -78,8 +84,8 @@ class UserServiceTest {
     @Test
     void updateUser() {
         // given
-        User existingUser = new User(1L, "Existing User", "existing@example.com", "password", new Cart());
-        User updateUser = new User(1L, "Another User", "another@example.com", "password123", new Cart());
+        User existingUser = new User(1L, "Existing User", "existing@example.com", "password", "USER", new Cart());
+        User updateUser = new User(1L, "Another User", "another@example.com", "password123", "USER", new Cart());
 
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(updateUser);
@@ -100,7 +106,7 @@ class UserServiceTest {
     @Test
     void updateUserWhenUserEqualsNull() {
         //given
-        User updateUser = new User(1L, "Another User", "another@example.com", "password123", new Cart());
+        User updateUser = new User(1L, "Another User", "another@example.com", "password123", "USER", new Cart());
 
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -115,7 +121,7 @@ class UserServiceTest {
     @Test
     void deleteUser() {
         //given
-        User existingUser = new User(1L, "Existing User", "existing@example.com", "password", new Cart());
+        User existingUser = new User(1L, "Existing User", "existing@example.com", "password", "USER", new Cart());
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
 
         //when
@@ -143,7 +149,7 @@ class UserServiceTest {
     @Test
     void authenticateUser() {
         //given
-        User testUser = new User(1L, "Test User", "test@example.com", "password", new Cart());
+        User testUser = new User(1L, "Test User", "test@example.com", "password", "USER", new Cart());
         String testEmail = "test@example.com";
         String testPassword = "password";
 

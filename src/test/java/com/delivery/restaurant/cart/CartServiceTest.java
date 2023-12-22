@@ -37,7 +37,7 @@ class CartServiceTest {
     void getCartItemsByUserId() {
         // given
         Long userId = 1L;
-        User user = new User(userId, "Test User", "test@example.com", "password", null);
+        User user = new User(userId, "Test User", "test@example.com", "password", "USER", null);
         Cart cart = new Cart(1L, user, 0.0f, null);
 
         Product product1 = new Product(1L, "Product 1", 10.0, "Image 1", null);
@@ -71,7 +71,7 @@ class CartServiceTest {
         Long productId = 1L;
         Integer quantity = 5;
 
-        User user = new User(1L, "Test User", "test@example.com", "password", null);
+        User user = new User(1L, "Test User", "test@example.com", "password", "USER", null);
         Cart cart = new Cart(cartId, user, 0.0f, new ArrayList<>());
         Product product = new Product(productId, "Product 1", 10.0, "Image 1", null);
 
@@ -99,7 +99,7 @@ class CartServiceTest {
     void removeProductFromCart() {
         //given
         Long cartId = 1L;
-        User user = new User(1L, "Test User", "test@example.com", "password", null);
+        User user = new User(1L, "Test User", "test@example.com", "password", "USER", null);
         Cart cart = new Cart(cartId, user, 0.0f, new ArrayList<>());
         Product product1 = new Product(1L, "Product 1", 10.0, "Image 1", null);
         CartItem cartItem1 = new CartItem(1L, cart, product1, 5);
@@ -120,7 +120,7 @@ class CartServiceTest {
     void updateCartItemQuantity() {
         //given
         Long cartId = 1L;
-        User user = new User(1L, "Test User", "test@example.com", "password", null);
+        User user = new User(1L, "Test User", "test@example.com", "password", "USER", null);
         Cart cart = new Cart(cartId, user, 0.0f, new ArrayList<>());
 
         Product product1 = new Product(1L, "Product 1", 10.0, "Image 1", null);

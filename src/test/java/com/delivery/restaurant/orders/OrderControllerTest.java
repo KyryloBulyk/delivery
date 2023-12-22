@@ -37,8 +37,8 @@ class OrderControllerTest {
     @Test
     void getAllProducts_ShouldReturnAllOrders() throws Exception {
         //given
-        User testUser1 = new User(1L, "Test User 1", "test1@example.com", "password123", null);
-        User testUser2 = new User(2L, "Test User 2", "test2@example.com", "password456", null);
+        User testUser1 = new User(1L, "Test User 1", "test1@example.com", "password123", "USER", null);
+        User testUser2 = new User(2L, "Test User 2", "test2@example.com", "password456", "USER", null);
         Order testOrder1 = new Order(1L, testUser1, 149.99, "new", new Date());
         Order testOrder2 = new Order(2L, testUser2, 249.99, "new", new Date());
 
@@ -56,7 +56,7 @@ class OrderControllerTest {
     void getOrdersByUserId_ShouldReturnAllOrdersForUser() throws Exception {
         //given
         Long userId = 1L;
-        User testUser1 = new User(userId, "Test User 1", "test1@example.com", "password123", null);
+        User testUser1 = new User(userId, "Test User 1", "test1@example.com", "password123", "USER", null);
         Order testOrder1 = new Order(1L, testUser1, 149.99, "new", new Date());
         Order testOrder2 = new Order(2L, testUser1, 249.99, "new", new Date());
 
@@ -74,7 +74,7 @@ class OrderControllerTest {
     void createOrder_ShouldReturnCreatedOrder() throws Exception {
         //given
         String orderJson = "{\"userId\":\"1\",\"totalPrice\":\"149.99\",\"status\":\"new status\",\"date\":\"2023-12-19T00:00:00.000+00:00\"}";
-        User testUser1 = new User(1L, "Test User 1", "test1@example.com", "password123", null);
+        User testUser1 = new User(1L, "Test User 1", "test1@example.com", "password123", "USER", null);
         Order testOrder1 = new Order(1L, testUser1, 149.99, "new status", new Date());
 
         Mockito.when(orderService.createOrder(Mockito.any(OrderDTO.class))).thenReturn(testOrder1);
@@ -95,7 +95,7 @@ class OrderControllerTest {
         //given
         Long orderId = 1L;
         String orderJson = "{\"userId\":\"1\",\"totalPrice\":\"149.99\",\"status\":\"new status\",\"date\":\"2023-12-19T00:00:00.000+00:00\"}";
-        User testUser1 = new User(1L, "Test User 1", "test1@example.com", "password123", null);
+        User testUser1 = new User(1L, "Test User 1", "test1@example.com", "password123", "USER", null);
         Order updatedOrder = new Order(orderId, testUser1, 149.99, "new status", new Date());
 
         Mockito.when(orderService.updateOrder(Mockito.eq(orderId) ,Mockito.any(OrderDTO.class))).thenReturn(updatedOrder);

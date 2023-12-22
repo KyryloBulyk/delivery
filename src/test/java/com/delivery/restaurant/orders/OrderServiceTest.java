@@ -54,7 +54,7 @@ class OrderServiceTest {
     void createOrder() {
         //given
         OrderDTO testOrderDTO = new OrderDTO(1L, 1L, 12.99, "test status", new Date());
-        User testUser = new User(1L, "Test Name", "test@emaple.com", "password", new Cart());
+        User testUser = new User(1L, "Test Name", "test@emaple.com", "password", "USER", new Cart());
 
         Order testOrder = new Order();
         testOrder.setTotalPrice(testOrderDTO.getTotalPrice());
@@ -81,8 +81,8 @@ class OrderServiceTest {
         // given
         Long differentUserId = 2L;
         OrderDTO testOrderDTO = new OrderDTO(1L, differentUserId, 12.99, "test status", new Date());
-        User testUser = new User(1L, "Test Name", "test@example.com", "password", new Cart());
-        User newUser = new User(differentUserId, "New User", "new@example.com", "newpassword", new Cart());
+        User testUser = new User(1L, "Test Name", "test@example.com", "password", "USER", new Cart());
+        User newUser = new User(differentUserId, "New User", "new@example.com", "newpassword", "USER", new Cart());
 
         Order existingOrder = new Order();
         existingOrder.setId(1L);

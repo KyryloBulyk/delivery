@@ -33,8 +33,8 @@ class UserControllerTest {
     @Test
     public void getAllUsers_ShouldReturnListOfUsers() throws Exception {
         //given
-        User user1 = new User(1L, "User1", "user1@example.com", "password", null);
-        User user2 = new User(2L, "User2", "user2@example.com", "password", null);
+        User user1 = new User(1L, "User1", "user1@example.com", "password", "USER", null);
+        User user2 = new User(2L, "User2", "user2@example.com", "password", "USER", null);
         List<User> users = Arrays.asList(user1, user2);
         Mockito.when(userService.getAllUsers()).thenReturn(users);
 
@@ -47,8 +47,8 @@ class UserControllerTest {
     @Test
     public void createUser_ShouldReturnCreatedUser() throws Exception {
         // given
-        String userJson = "{\"name\":\"Test User\",\"email\":\"test@example.com\",\"password\":\"password\"}";
-        User createdUser = new User(1L, "Test User", "test@example.com", "password", null);
+        String userJson = "{\"name\":\"Test User\",\"email\":\"test@example.com\",\"password\":\"password\"}, \"rolesSet\":\"USER\"";
+        User createdUser = new User(1L, "Test User", "test@example.com", "password", "USER", null);
 
         Mockito.when(userService.createUser(Mockito.any(User.class))).thenReturn(createdUser);
 
@@ -66,8 +66,8 @@ class UserControllerTest {
     @Test
     public void loginUser_ShouldReturnUser_WhenValidCredentials() throws Exception {
         //given
-        String loginJson = "{\"email\":\"user1@example.com\",\"password\":\"password\"}";
-        User authenticatedUser = new User(1L, "User1", "user1@example.com", "password", null);
+        String loginJson = "{\"email\":\"user1@example.com\",\"password\":\"password\", \"rolesSet\":\"USER\"}";
+        User authenticatedUser = new User(1L, "User1", "user1@example.com", "password", "USER", null);
 
         Mockito.when(userService.authenticateUser("user1@example.com", "password")).thenReturn(authenticatedUser);
 
@@ -86,8 +86,8 @@ class UserControllerTest {
     public void updateUser_ShouldUpdateAndReturnUser() throws Exception {
         // given
         Long userId = 1L;
-        String userUpdateJson = "{\"name\":\"Updated User\",\"email\":\"update@example.com\",\"password\":\"newpassword\"}";
-        User updatedUser = new User(userId, "Updated User", "update@example.com", "newpassword", null);
+        String userUpdateJson = "{\"name\":\"Updated User\",\"email\":\"update@example.com\",\"password\":\"newpassword\", \"rolesSet\":\"USER\"}";
+        User updatedUser = new User(userId, "Updated User", "update@example.com", "newpassword", "USER", null);
 
         Mockito.when(userService.updateUser(Mockito.eq(userId), Mockito.any(User.class))).thenReturn(updatedUser);
 
