@@ -16,7 +16,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping()
+    @GetMapping("/all")
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
@@ -47,6 +47,5 @@ public class ProductController {
 
         return ResponseEntity.ok().build();
     }
-
 
 }

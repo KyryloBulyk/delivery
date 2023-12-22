@@ -34,16 +34,14 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/v1/users/authenticate").permitAll()
-                .requestMatchers("/api/v1/users/create").permitAll()
-                .requestMatchers("/api/v1/products").permitAll()
-                .and()
-                .authorizeHttpRequests().requestMatchers("/api/v1/users/**")
-                .authenticated().and()
-                .authorizeHttpRequests().requestMatchers("/api/v1/products/**")
-                .authenticated().and()
+        return http
+                .csrf().disable()
+                .authorizeHttpRequests((authz) -> authz
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/authenticate").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/create").permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/v1/products/all").permitAll() // Вільний доступ до GET запитів на /api/v1/products
+                        .anyRequest().authenticated() // Для всіх інших запитів потрібна аутентифікація
+                )
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
