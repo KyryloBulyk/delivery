@@ -1,5 +1,7 @@
 package com.delivery.restaurant.security;
 
+import com.delivery.restaurant.authenticate.JwtAuthFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,31 +22,52 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    @Autowired
+    private JwtAuthFilter authFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf().disable()
+        return http.csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/users/authenticate").permitAll()
                 .and()
-                .authorizeHttpRequests().requestMatchers("/api/v1/products/**").authenticated()
+                .authorizeHttpRequests().requestMatchers("/api/v1/users/**")
+                .authenticated().and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .httpBasic()
-                .and().build();
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
+
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        return http
+//                .csrf().disable()
+//                .authorizeHttpRequests()
+//                .requestMatchers("/api/v1/users/authenticate").permitAll()
+//                .and()
+//                .authorizeHttpRequests().requestMatchers("/api/v1/products/**").authenticated()
+//                .and()
+////                .httpBasic()
+////                .and().build();
 //                .sessionManagement()
 //                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 //                .and()
 //                .authenticationProvider(authenticationProvider())
 //                .addFilterBefore(authFilter)
-
-
-    }
+//                .build();
+//
+//
+//    }
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder encoder) {
