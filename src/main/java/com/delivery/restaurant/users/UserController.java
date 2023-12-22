@@ -2,8 +2,10 @@ package com.delivery.restaurant.users;
 
 import com.delivery.restaurant.authenticate.AuthRequest;
 import com.delivery.restaurant.authenticate.JwtService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -72,11 +74,26 @@ public class UserController {
     }
 
     @PostMapping("/authenticate")
-    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+    public ResponseEntity<?> authenticateAndGetToken(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
+        );
 
         if(authentication.isAuthenticated()) {
-            return jwtService.generateToken(authRequest.getUsername());
+            String jwtToken = jwtService.generateToken(authRequest.getUsername());
+
+            // Створення HTTP-тільки кукі
+            ResponseCookie cookie = ResponseCookie.from("jwtToken", jwtToken) // назва кукі
+                    .httpOnly(true)   // встановлення кукі як HTTP-тільки
+                    .secure(true)    // використання secure, якщо ви працюєте з HTTPS
+                    .path("/")       // шлях, для якого буде доступний кукі
+                    .maxAge(60 * 60) // тривалість життя кукі у секундах
+                    .build();
+
+            response.addHeader("Set-Cookie", cookie.toString());
+
+            // Можете повернути додаткову інформацію, якщо потрібно
+            return ResponseEntity.ok().body("User authenticated successfully");
         } else {
             throw new UsernameNotFoundException("Invalid user request");
         }
