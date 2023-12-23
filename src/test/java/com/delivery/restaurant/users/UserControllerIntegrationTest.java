@@ -1,5 +1,6 @@
 package com.delivery.restaurant.users;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -45,28 +46,28 @@ public class UserControllerIntegrationTest {
         userRepository.save(testUser);
     }
 
-    private String authenticateAndGetToken(String username, String password) throws Exception {
+    private MvcResult authenticateAndGetToken(String username, String password) throws Exception {
         String authRequestJson = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
 
-        MvcResult result = mockMvc.perform(post("/api/v1/users/authenticate")
+        return mockMvc.perform(post("/api/v1/users/authenticate")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(authRequestJson))
                 .andExpect(status().isOk())
                 .andReturn();
-
-        return result.getResponse().getContentAsString();
     }
 
 
     @Test
     public void testGetAllUsers() throws Exception {
-        String token = authenticateAndGetToken("test@example.com", "password");
+        MvcResult authResult = authenticateAndGetToken("test@example.com", "password");
+        Cookie jwtTokenCookie = new Cookie("jwtToken", authResult.getResponse().getCookie("jwtToken").getValue());
 
         mockMvc.perform(get("/api/v1/users")
-                        .header("Authorization", "Bearer " + token))
+                        .cookie(jwtTokenCookie))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
+
 
     @Test
     public void testCreateUser() throws Exception {
@@ -80,7 +81,8 @@ public class UserControllerIntegrationTest {
 
     @Test
     public void testUpdateUser() throws Exception {
-        String token = authenticateAndGetToken("test@example.com", "password");
+        MvcResult authResult = authenticateAndGetToken("test@example.com", "password");
+        Cookie jwtTokenCookie = new Cookie("jwtToken", authResult.getResponse().getCookie("jwtToken").getValue());
         String updatedUserJson = "{\"name\":\"Updated User\",\"email\":\"updated@example.com\",\"password\":\"newpassword\",\"roles\":\"ADMIN\"}";
 
         User testUser = new User();
@@ -92,7 +94,7 @@ public class UserControllerIntegrationTest {
         long userId = savedUser.getId();
 
         mockMvc.perform(put("/api/v1/users/changing/" + userId)
-                        .header("Authorization", "Bearer " + token)
+                        .cookie(jwtTokenCookie)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedUserJson))
                 .andExpect(status().isOk());
@@ -100,7 +102,8 @@ public class UserControllerIntegrationTest {
 
     @Test
     public void testDeleteUser() throws Exception {
-        String token = authenticateAndGetToken("test@example.com", "password");
+        MvcResult authResult = authenticateAndGetToken("test@example.com", "password");
+        Cookie jwtTokenCookie = new Cookie("jwtToken", authResult.getResponse().getCookie("jwtToken").getValue());
 
         User testUser = new User();
         testUser.setName("Old Test User");
@@ -111,7 +114,7 @@ public class UserControllerIntegrationTest {
         long userId = savedUser.getId();
 
         mockMvc.perform(delete("/api/v1/users/deleting/" + userId)
-                        .header("Authorization", "Bearer " + token))
+                        .cookie(jwtTokenCookie))
                 .andExpect(status().isOk());
     }
 
@@ -123,11 +126,11 @@ public class UserControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(authRequestJson))
                 .andExpect(status().isOk())
+                .andExpect(cookie().exists("jwtToken"))
                 .andReturn();
 
-        String responseBody = result.getResponse().getContentAsString();
-        assertFalse(responseBody.isEmpty());
     }
+
 
 
 }
