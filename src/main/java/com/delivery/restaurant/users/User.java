@@ -43,7 +43,7 @@ public class User {
     private Cart cart;
 
     public Set<String> getRolesSet() {
-        return new HashSet<>(Arrays.asList(roles.split(",")));
+        return (roles != null) ? new HashSet<>(Arrays.asList(roles.split(","))) : new HashSet<>();
     }
 
     public void setRolesSet(Set<String> rolesSet) {

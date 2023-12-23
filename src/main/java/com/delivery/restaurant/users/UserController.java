@@ -99,10 +99,16 @@ public class UserController {
         }
     }
 
-    @GetMapping("/hello")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String hello() {
-        return "Hello World";
-    }
-
+//    @PostMapping("/authenticate")
+//    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
+//        Authentication authentication = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
+//        );
+//
+//        if(authentication.isAuthenticated()) {
+//            return jwtService.generateToken(authRequest.getUsername());
+//        } else {
+//            throw new UsernameNotFoundException("Invalid user request");
+//        }
+//    }
 }
