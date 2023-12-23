@@ -4,6 +4,7 @@ import com.delivery.restaurant.categories.Category;
 import com.delivery.restaurant.categories.CategoryRepository;
 import com.delivery.restaurant.users.User;
 import com.delivery.restaurant.users.UserRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -46,6 +47,10 @@ public class ProductControllerIntegrationTest {
 
     @BeforeEach
     public void setup() throws Exception {
+        userRepository.deleteAll();
+        productRepository.deleteAll();
+        categoryRepository.deleteAll();
+
         User testUser = new User();
         testUser.setName("Test User");
         testUser.setEmail("test@example.com");
@@ -111,7 +116,7 @@ public class ProductControllerIntegrationTest {
     @Test
     public void updateProduct() throws Exception {
         String updatedProductJson = "{\"title\":\"Updated Product\",\"price\":15.0,\"img\":\"updatedUrl\",\"categoryId\":1}";
-        mockMvc.perform(put("/api/v1/products/changing/{id}", 1)
+        mockMvc.perform(put("/api/v1/products/changing/{id}", productId)
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedProductJson))

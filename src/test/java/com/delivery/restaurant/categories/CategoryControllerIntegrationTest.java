@@ -2,6 +2,7 @@ package com.delivery.restaurant.categories;
 
 import com.delivery.restaurant.users.User;
 import com.delivery.restaurant.users.UserRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
