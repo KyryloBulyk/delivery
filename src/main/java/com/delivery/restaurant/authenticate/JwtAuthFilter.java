@@ -38,7 +38,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Отримання JWT з кукі
         Cookie jwtTokenCookie = WebUtils.getCookie(request, "jwtToken");
         if (jwtTokenCookie != null) {
             token = jwtTokenCookie.getValue();
