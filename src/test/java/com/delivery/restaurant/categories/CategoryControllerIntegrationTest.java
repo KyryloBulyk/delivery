@@ -2,6 +2,7 @@ package com.delivery.restaurant.categories;
 
 import com.delivery.restaurant.users.User;
 import com.delivery.restaurant.users.UserRepository;
+import jakarta.servlet.http.Cookie;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +36,7 @@ public class CategoryControllerIntegrationTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    private String token;
+    private Cookie jwtTokenCookie;
 
     @BeforeEach
     public void setup() throws Exception {
@@ -46,7 +47,8 @@ public class CategoryControllerIntegrationTest {
         testUser.setRolesSet(Set.of("ROLE_USER"));
         userRepository.save(testUser);
 
-        this.token = authenticateAndGetToken("test@example.com", "password");
+        MvcResult authResult = authenticateAndGetToken("test@example.com", "password");
+        this.jwtTokenCookie = new Cookie("jwtToken", authResult.getResponse().getCookie("jwtToken").getValue());
     }
 
     @AfterEach
@@ -55,22 +57,20 @@ public class CategoryControllerIntegrationTest {
         categoryRepository.deleteAll();
     }
 
-    private String authenticateAndGetToken(String username, String password) throws Exception {
+    private MvcResult authenticateAndGetToken(String username, String password) throws Exception {
         String authRequestJson = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
 
-        MvcResult result = mockMvc.perform(post("/api/v1/users/authenticate")
+        return mockMvc.perform(post("/api/v1/users/authenticate")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(authRequestJson))
                 .andExpect(status().isOk())
                 .andReturn();
-
-        return result.getResponse().getContentAsString();
     }
 
     @Test
     public void getAllCategories() throws Exception {
         mockMvc.perform(get("/api/v1/categories")
-                        .header("Authorization", "Bearer " + token))
+                        .cookie(jwtTokenCookie))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
@@ -80,7 +80,7 @@ public class CategoryControllerIntegrationTest {
         String categoryJson = "{\"name\":\"New Category\"}";
 
         mockMvc.perform(post("/api/v1/categories/create")
-                        .header("Authorization", "Bearer " + token)
+                        .cookie(jwtTokenCookie)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(categoryJson))
                 .andExpect(status().isOk());
@@ -94,7 +94,7 @@ public class CategoryControllerIntegrationTest {
 
         String updatedCategoryJson = "{\"name\":\"Updated Category\"}";
         mockMvc.perform(put("/api/v1/categories/changing/{id}", savedCategory.getId())
-                        .header("Authorization", "Bearer " + token)
+                        .cookie(jwtTokenCookie)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedCategoryJson))
                 .andExpect(status().isOk());
@@ -107,7 +107,7 @@ public class CategoryControllerIntegrationTest {
         Category savedCategory = categoryRepository.save(category);
 
         mockMvc.perform(delete("/api/v1/categories/deleting/{id}", savedCategory.getId())
-                        .header("Authorization", "Bearer " + token))
+                        .cookie(jwtTokenCookie))
                 .andExpect(status().isOk());
     }
 }

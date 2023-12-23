@@ -8,6 +8,7 @@ import com.delivery.restaurant.products.Product;
 import com.delivery.restaurant.products.ProductRepository;
 import com.delivery.restaurant.users.User;
 import com.delivery.restaurant.users.UserRepository;
+import jakarta.servlet.http.Cookie;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +50,7 @@ public class CartControllerIntegrationTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private String token;
+    private Cookie jwtTokenCookie;
     private Long userId;
     private Long productId;
     private Long cartId;
@@ -76,19 +77,19 @@ public class CartControllerIntegrationTest {
         product = productRepository.save(product);
 
         this.productId = product.getId();
-        this.token = authenticateAndGetToken("test@example.com", "password");
+
+        MvcResult authResult = authenticateAndGetToken("test@example.com", "password");
+        this.jwtTokenCookie = new Cookie("jwtToken", authResult.getResponse().getCookie("jwtToken").getValue());
     }
 
-    private String authenticateAndGetToken(String username, String password) throws Exception {
+    private MvcResult authenticateAndGetToken(String username, String password) throws Exception {
         String authRequestJson = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
 
-        MvcResult result = mockMvc.perform(post("/api/v1/users/authenticate")
+        return mockMvc.perform(post("/api/v1/users/authenticate")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(authRequestJson))
                 .andExpect(status().isOk())
                 .andReturn();
-
-        return result.getResponse().getContentAsString();
     }
 
     @AfterEach
@@ -104,7 +105,7 @@ public class CartControllerIntegrationTest {
     public void getCartItemsByUserId() throws Exception {
         mockMvc.perform(get("/api/v1/cart")
                         .param("userId", userId.toString())
-                        .header("Authorization", "Bearer " + token))
+                        .cookie(jwtTokenCookie))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
@@ -115,7 +116,7 @@ public class CartControllerIntegrationTest {
                         .param("cartId", cartId.toString())
                         .param("productId", productId.toString())
                         .param("quantity", "1")
-                        .header("Authorization", "Bearer " + token))
+                        .cookie(jwtTokenCookie))
                 .andExpect(status().isOk());
     }
 
@@ -128,7 +129,7 @@ public class CartControllerIntegrationTest {
         mockMvc.perform(put("/api/v1/cart/update")
                         .param("cartItemId", savedCartItem.getCartItemId().toString())
                         .param("quantity", "2")
-                        .header("Authorization", "Bearer " + token))
+                        .cookie(jwtTokenCookie))
                 .andExpect(status().isOk());
     }
 
@@ -139,7 +140,7 @@ public class CartControllerIntegrationTest {
 
         mockMvc.perform(delete("/api/v1/cart/remove")
                         .param("cartItemId", savedCartItem.getCartItemId().toString())
-                        .header("Authorization", "Bearer " + token))
+                        .cookie(jwtTokenCookie))
                 .andExpect(status().isOk());
     }
 }

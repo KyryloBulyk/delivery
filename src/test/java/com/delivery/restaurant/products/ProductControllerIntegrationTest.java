@@ -4,6 +4,7 @@ import com.delivery.restaurant.categories.Category;
 import com.delivery.restaurant.categories.CategoryRepository;
 import com.delivery.restaurant.users.User;
 import com.delivery.restaurant.users.UserRepository;
+import jakarta.servlet.http.Cookie;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +42,7 @@ public class ProductControllerIntegrationTest {
     @Autowired
     private ProductRepository productRepository;
 
-    private String token;
+    private Cookie jwtTokenCookie;
 
     private Long productId;
 
@@ -58,7 +59,8 @@ public class ProductControllerIntegrationTest {
         testUser.setRolesSet(Set.of("ROLE_USER"));
         userRepository.save(testUser);
 
-        this.token = authenticateAndGetToken("test@example.com", "password");
+        MvcResult authResult = authenticateAndGetToken("test@example.com", "password");
+        this.jwtTokenCookie = new Cookie("jwtToken", authResult.getResponse().getCookie("jwtToken").getValue());
 
         Category category = new Category();
         category.setName("Test Category");
@@ -81,22 +83,21 @@ public class ProductControllerIntegrationTest {
         categoryRepository.deleteAll();
     }
 
-    private String authenticateAndGetToken(String username, String password) throws Exception {
+    private MvcResult authenticateAndGetToken(String username, String password) throws Exception {
         String authRequestJson = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
 
-        MvcResult result = mockMvc.perform(post("/api/v1/users/authenticate")
+        return mockMvc.perform(post("/api/v1/users/authenticate")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(authRequestJson))
                 .andExpect(status().isOk())
                 .andReturn();
-
-        return result.getResponse().getContentAsString();
     }
+
 
     @Test
     public void getAllProducts() throws Exception {
         mockMvc.perform(get("/api/v1/products")
-                        .header("Authorization", "Bearer " + token))
+                        .cookie(jwtTokenCookie))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
@@ -107,7 +108,7 @@ public class ProductControllerIntegrationTest {
         String productJson = "{\"title\":\"New Product\",\"price\":10.0,\"img\":\"url\",\"categoryId\":" + categoryId + "}";
 
         mockMvc.perform(post("/api/v1/products/create")
-                        .header("Authorization", "Bearer " + token)
+                        .cookie(jwtTokenCookie)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(productJson))
                 .andExpect(status().isOk());
@@ -117,7 +118,7 @@ public class ProductControllerIntegrationTest {
     public void updateProduct() throws Exception {
         String updatedProductJson = "{\"title\":\"Updated Product\",\"price\":15.0,\"img\":\"updatedUrl\",\"categoryId\":1}";
         mockMvc.perform(put("/api/v1/products/changing/{id}", productId)
-                        .header("Authorization", "Bearer " + token)
+                        .cookie(jwtTokenCookie)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedProductJson))
                 .andExpect(status().isOk());
@@ -125,8 +126,8 @@ public class ProductControllerIntegrationTest {
 
     @Test
     public void deleteProduct() throws Exception {
-        mockMvc.perform(delete("/api/v1/products/deleting/{id}", productId) // Використовуйте збережений ID
-                        .header("Authorization", "Bearer " + token))
+        mockMvc.perform(delete("/api/v1/products/deleting/{id}", productId)
+                        .cookie(jwtTokenCookie))
                 .andExpect(status().isOk());
     }
 }

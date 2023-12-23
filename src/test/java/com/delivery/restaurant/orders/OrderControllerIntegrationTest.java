@@ -2,6 +2,7 @@ package com.delivery.restaurant.orders;
 
 import com.delivery.restaurant.users.User;
 import com.delivery.restaurant.users.UserRepository;
+import jakarta.servlet.http.Cookie;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +37,7 @@ public class OrderControllerIntegrationTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private String token;
+    private Cookie jwtTokenCookie;
     private Long userId;
     private Long orderId;
 
@@ -58,7 +59,9 @@ public class OrderControllerIntegrationTest {
 
         this.orderId = savedOrder.getId();
         this.userId = savedUser.getId();
-        this.token = authenticateAndGetToken("test@example.com", "password");
+
+        MvcResult authResult = authenticateAndGetToken("test@example.com", "password");
+        this.jwtTokenCookie = new Cookie("jwtToken", authResult.getResponse().getCookie("jwtToken").getValue());
     }
 
     @AfterEach
@@ -67,22 +70,20 @@ public class OrderControllerIntegrationTest {
         userRepository.deleteAll();
     }
 
-    private String authenticateAndGetToken(String username, String password) throws Exception {
+    private MvcResult authenticateAndGetToken(String username, String password) throws Exception {
         String authRequestJson = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
 
-        MvcResult result = mockMvc.perform(post("/api/v1/users/authenticate")
+        return mockMvc.perform(post("/api/v1/users/authenticate")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(authRequestJson))
                 .andExpect(status().isOk())
                 .andReturn();
-
-        return result.getResponse().getContentAsString();
     }
 
     @Test
     public void getAllOrders() throws Exception {
         mockMvc.perform(get("/api/v1/orders")
-                        .header("Authorization", "Bearer " + token))
+                        .cookie(jwtTokenCookie))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
@@ -90,7 +91,7 @@ public class OrderControllerIntegrationTest {
     @Test
     public void getOrdersByUserId() throws Exception {
         mockMvc.perform(get("/api/v1/orders/user/{userId}", userId)
-                        .header("Authorization", "Bearer " + token))
+                        .cookie(jwtTokenCookie))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
@@ -99,7 +100,7 @@ public class OrderControllerIntegrationTest {
     public void createOrder() throws Exception {
         String orderJson = "{\"userId\":" + userId + ", \"totalPrice\":100.0, \"status\":\"NEW\", \"date\":\"2023-01-01\"}";
         mockMvc.perform(post("/api/v1/orders/create")
-                        .header("Authorization", "Bearer " + token)
+                        .cookie(jwtTokenCookie)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(orderJson))
                 .andExpect(status().isOk());
@@ -115,7 +116,7 @@ public class OrderControllerIntegrationTest {
 
         String updatedOrderJson = "{\"userId\":" + userId + ", \"totalPrice\":200.0, \"status\":\"UPDATED\", \"date\":\"2023-01-02\"}";
         mockMvc.perform(put("/api/v1/orders/changing/{id}", savedOrder.getId())
-                        .header("Authorization", "Bearer " + token)
+                        .cookie(jwtTokenCookie)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedOrderJson))
                 .andExpect(status().isOk());
@@ -130,7 +131,7 @@ public class OrderControllerIntegrationTest {
         Order savedOrder = orderRepository.save(order);
 
         mockMvc.perform(delete("/api/v1/orders/deleting/{id}", savedOrder.getId())
-                        .header("Authorization", "Bearer " + token))
+                        .cookie(jwtTokenCookie))
                 .andExpect(status().isOk());
     }
 }
