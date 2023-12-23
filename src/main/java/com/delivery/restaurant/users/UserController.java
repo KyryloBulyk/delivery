@@ -73,42 +73,42 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<?> authenticateAndGetToken(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
-        );
-
-        if(authentication.isAuthenticated()) {
-            String jwtToken = jwtService.generateToken(authRequest.getUsername());
-
-            // Створення HTTP-тільки кукі
-            ResponseCookie cookie = ResponseCookie.from("jwtToken", jwtToken) // назва кукі
-                    .httpOnly(true)   // встановлення кукі як HTTP-тільки
-                    .secure(true)    // використання secure, якщо ви працюєте з HTTPS
-                    .path("/")       // шлях, для якого буде доступний кукі
-                    .maxAge(60 * 60) // тривалість життя кукі у секундах
-                    .build();
-
-            response.addHeader("Set-Cookie", cookie.toString());
-
-            // Можете повернути додаткову інформацію, якщо потрібно
-            return ResponseEntity.ok().body("User authenticated successfully");
-        } else {
-            throw new UsernameNotFoundException("Invalid user request");
-        }
-    }
-
 //    @PostMapping("/authenticate")
-//    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
+//    public ResponseEntity<?> authenticateAndGetToken(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
 //        Authentication authentication = authenticationManager.authenticate(
 //                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
 //        );
 //
 //        if(authentication.isAuthenticated()) {
-//            return jwtService.generateToken(authRequest.getUsername());
+//            String jwtToken = jwtService.generateToken(authRequest.getUsername());
+//
+//            // Створення HTTP-тільки кукі
+//            ResponseCookie cookie = ResponseCookie.from("jwtToken", jwtToken) // назва кукі
+//                    .httpOnly(true)   // встановлення кукі як HTTP-тільки
+//                    .secure(true)    // використання secure, якщо ви працюєте з HTTPS
+//                    .path("/")       // шлях, для якого буде доступний кукі
+//                    .maxAge(60 * 60) // тривалість життя кукі у секундах
+//                    .build();
+//
+//            response.addHeader("Set-Cookie", cookie.toString());
+//
+//            // Можете повернути додаткову інформацію, якщо потрібно
+//            return ResponseEntity.ok().body("User authenticated successfully");
 //        } else {
 //            throw new UsernameNotFoundException("Invalid user request");
 //        }
 //    }
+
+    @PostMapping("/authenticate")
+    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
+        );
+
+        if(authentication.isAuthenticated()) {
+            return jwtService.generateToken(authRequest.getUsername());
+        } else {
+            throw new UsernameNotFoundException("Invalid user request");
+        }
+    }
 }
