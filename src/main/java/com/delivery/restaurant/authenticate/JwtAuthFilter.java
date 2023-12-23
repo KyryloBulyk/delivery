@@ -33,6 +33,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = null;
         String username = null;
 
+        if(request.getRequestURI().equals("/api/v1/users/authenticate")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // Отримання JWT з кукі
         Cookie jwtTokenCookie = WebUtils.getCookie(request, "jwtToken");
         if (jwtTokenCookie != null) {

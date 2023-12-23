@@ -129,4 +129,9 @@ public class UserController {
 //            throw new UsernameNotFoundException("Invalid user request");
 //        }
 //    }
+
+    @GetMapping("/hello")
+    public String hello() {
+        return "Hello";
+    }
 }
