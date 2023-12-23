@@ -82,12 +82,11 @@ public class UserController {
         if(authentication.isAuthenticated()) {
             String jwtToken = jwtService.generateToken(authRequest.getUsername());
 
-            // Створення HTTP-тільки кукі
             ResponseCookie cookie = ResponseCookie.from("jwtToken", jwtToken) // назва кукі
-                    .httpOnly(true)   // встановлення кукі як HTTP-тільки
-                    .secure(true)    // використання secure, якщо ви працюєте з HTTPS
-                    .path("/")       // шлях, для якого буде доступний кукі
-                    .maxAge(60 * 60) // тривалість життя кукі у секундах
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(60 * 60 * 10000)
                     .build();
 
             response.addHeader("Set-Cookie", cookie.toString());
@@ -101,6 +100,21 @@ public class UserController {
         } else {
             throw new UsernameNotFoundException("Invalid user request");
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        // Створення кукі, що очищає JWT токен
+        ResponseCookie clearCookie = ResponseCookie.from("jwtToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        response.addHeader("Set-Cookie", clearCookie.toString());
+
+        return ResponseEntity.ok().body("User logged out successfully");
     }
 
 //    @PostMapping("/authenticate")

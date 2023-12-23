@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/authenticate").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/create").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/hello").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/logout").permitAll()
                         .anyRequest().authenticated() // Для всіх інших запитів потрібна аутентифікація
                 )
                 .sessionManagement()
