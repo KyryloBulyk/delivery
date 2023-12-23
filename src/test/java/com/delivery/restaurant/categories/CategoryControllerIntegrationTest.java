@@ -2,6 +2,7 @@ package com.delivery.restaurant.categories;
 
 import com.delivery.restaurant.users.User;
 import com.delivery.restaurant.users.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +38,6 @@ public class CategoryControllerIntegrationTest {
 
     @BeforeEach
     public void setup() throws Exception {
-        userRepository.deleteAll();
-        categoryRepository.deleteAll();
-
         User testUser = new User();
         testUser.setName("Test User");
         testUser.setEmail("test@example.com");
@@ -48,6 +46,12 @@ public class CategoryControllerIntegrationTest {
         userRepository.save(testUser);
 
         this.token = authenticateAndGetToken("test@example.com", "password");
+    }
+
+    @AfterEach
+    void tearDown() {
+        userRepository.deleteAll();
+        categoryRepository.deleteAll();
     }
 
     private String authenticateAndGetToken(String username, String password) throws Exception {
