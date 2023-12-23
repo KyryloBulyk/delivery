@@ -99,6 +99,25 @@ public class UserController {
 //        }
 //    }
 
+//    @PostMapping("/authenticate")
+//    public ResponseEntity<AuthResponse> authenticateAndGetToken(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
+//        Authentication authentication = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
+//        );
+//
+//        if(authentication.isAuthenticated()) {
+//            String jwtToken = jwtService.generateToken(authRequest.getUsername());
+//
+//            User user = userService.findByEmail(authRequest.getUsername())
+//                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+//
+//            AuthResponse authResponse = new AuthResponse(jwtToken, user.getId());
+//            return ResponseEntity.ok(authResponse);
+//        } else {
+//            throw new UsernameNotFoundException("Invalid user request");
+//        }
+//    }
+
     @PostMapping("/authenticate")
     public String authenticateAndGetToken(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(
