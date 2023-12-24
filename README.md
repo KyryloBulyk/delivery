@@ -35,12 +35,6 @@ This project implements a web page for a fast-food restaurant. Users can view me
     ```
 
 
-## Configuring the Database
-Explain how to set up the PostgreSQL database:
-1. Install PostgreSQL.
-2. Create a new database named deliverydb.
-3. Update `application.properties` with your database credentials.
-
 ## Database Installation Guide
 
 This guide walks you through setting up the `deliverydb.sql` database locally using PostgreSQL.
@@ -84,7 +78,7 @@ This guide walks you through setting up the `deliverydb.sql` database locally us
      ```
 
 7. **Start Using the Database**:
-   - You can now run queries and interact with your database as required for the project.
+   - Update the `spring.datasource.username` and `spring.datasource.password` fields in `application.properties` with your PostgreSQL credentials.
 
 ### Troubleshooting
 
@@ -104,7 +98,7 @@ Execute the following command to start the application:
 Run the following command to execute Unit Tests and Integration Tests:
 
     ```bash
-        mvn test
+    mvn test
     ```
 
 ## Contributing
