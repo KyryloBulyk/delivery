@@ -1,33 +1,33 @@
-# Project Name
+# Delivery
 
 ## Overview
-Provide a brief description of your project here. Explain what your application does and its primary features. Mention the technologies, frameworks, or libraries used in the project, like Spring Boot, PostgreSQL, etc.
+This project was created to implement a web page for a fast food restaurant. On this web page, you will be able to view the entire menu, as well as add dishes to the order, which can be placed for delivery and paid for immediately. The User functionality is also implemented, in which each user will need to register and log in to use the full functionality of the website.
 
 ## Features
-List the key features of your application. For example:
-- User authentication and authorization
-- CRUD operations for managing resources (like products, orders, etc.)
+- Authentication and authorization of users via JWT Token
+- Secure API endpoints
+- CRUD operations for managing User, Product, Order, Cart and Categories
 - Integration with PostgreSQL for data persistence
 - Real-time data updates (if applicable)
-- Secure API endpoints
+- Unit tests for all major Services
+- Integration Tests for all Controllers
+- Using H2 Database for Integration Tests
 
 ## Prerequisites
-Describe the prerequisites required to run your project. Include:
-- Java JDK version
-- Maven or Gradle (depending on what you used)
+- Java JDK 17
+- Maven
 - PostgreSQL
-- Any other software or tool required
 
 ## Setting Up the Development Environment
 Provide step-by-step instructions on setting up the development environment. For instance:
 1. Clone the repository:
-git clone https://your-repository-url.git
+```git clone https://github.com/KyryloBulyk/delivery.git```
 
 2. Navigate to the project directory:
-cd your-project-directory
+```cd delivery```
 
 3. Install dependencies:
-mvn install
+```mvn install```
 
 
 ## Configuring the Database
@@ -37,21 +37,14 @@ Explain how to set up the PostgreSQL database:
 3. Configure database properties in `application.properties`
 
 ## Running the Application
-Instructions on how to run your application. For example:
-```
-mvn spring-boot:run
+```mvn spring-boot:run```
 
-```
 
 ## Testing
-Explain how to run tests:
-```
-mvn test
-```
+
+```mvn test```
 
 ## Contributing
 If you are open to contributions, explain how others can contribute to your project. Include guidelines for submitting pull requests, coding standards, and other requirements.
 
 
-mvn clean install
-mvn spring-boot:run
