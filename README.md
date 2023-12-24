@@ -1,17 +1,17 @@
 # Delivery
 
 ## Overview
-This project was created to implement a web page for a fast food restaurant. On this web page, you will be able to view the entire menu, as well as add dishes to the order, which can be placed for delivery and paid for immediately. The User functionality is also implemented, in which each user will need to register and log in to use the full functionality of the website.
+This project implements a web page for a fast-food restaurant. Users can view menus, add dishes to their order, place deliveries, and make payments. The system features user authentication, allowing full access only to registered and logged-in users.
 
 ## Features
-- Authentication and authorization of users via JWT Token
+- User authentication and authorization via JWT Tokens
 - Secure API endpoints
-- CRUD operations for managing User, Product, Order, Cart and Categories
-- Integration with PostgreSQL for data persistence
-- Real-time data updates (if applicable)
-- Unit tests for all major Services
-- Integration Tests for all Controllers
-- Using H2 Database for Integration Tests
+- CRUD operations for User, Product, Order, Cart, and Categories
+- PostgreSQL integration for data persistence
+- Real-time data updates (where applicable)
+- Comprehensive unit tests for Services
+- Integration tests for all Controllers
+- H2 Database usage for Integration Tests
 
 ## Prerequisites
 - Java JDK 17
@@ -19,28 +19,27 @@ This project was created to implement a web page for a fast food restaurant. On 
 - PostgreSQL
 
 ## Setting Up the Development Environment
-Provide step-by-step instructions on setting up the development environment. For instance:
-1. Clone the repository:
-```
-git clone https://github.com/KyryloBulyk/delivery.git
-```
+1. **Clone the Repository**:
+    ```bash
+   git clone https://github.com/KyryloBulyk/delivery.git
+    ```
 
 2. Navigate to the project directory:
-```
-cd delivery
-```
+    ```bash
+    cd delivery
+    ```
 
 3. Install dependencies:
-```
-mvn install
-```
+    ```bash
+    mvn install
+    ```
 
 
 ## Configuring the Database
 Explain how to set up the PostgreSQL database:
-1. Install PostgreSQL
-2. Create a new database
-3. Configure database properties in `application.properties`
+1. Install PostgreSQL.
+2. Create a new database named deliverydb.
+3. Update `application.properties` with your database credentials.
 
 ## Database Installation Guide
 
@@ -94,18 +93,24 @@ This guide walks you through setting up the `deliverydb.sql` database locally us
 
 
 ## Running the Application
-```
-mvn spring-boot:run
-```
+Execute the following command to start the application:
+
+    ```bash
+    mvn spring-boot:run
+    ```
 
 
 ## Testing
+Run the following command to execute Unit Tests and Integration Tests:
 
-```
-mvn test
-```
+    ```bash
+        mvn test
+    ```
 
 ## Contributing
-If you are open to contributions, explain how others can contribute to your project. Include guidelines for submitting pull requests, coding standards, and other requirements.
+Contributions to the project are welcome. Please adhere to the following guidelines:
+- Fork the repository and create a new branch for your feature.
+- Write clean, commented, and tested code.
+- Submit a pull request with a clear description of the changes.
 
-
+Your feedback and contributions are highly appreciated!
