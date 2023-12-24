@@ -96,15 +96,17 @@ This guide walks you through setting up the `deliverydb.sql` database locally us
 
 ## Running the Application
 Execute the following command to start the application:
+
     ```bash
-    mvn spring-boot:run
+        mvn spring-boot:run
     ```
 
 
 ## Testing
 Run the following command to execute Unit Tests and Integration Tests:
+
     ```bash
-    mvn test
+        mvn test
     ```
 
 
